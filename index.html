@@ -3,92 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>徐沐阳 - 个人主页</title>
+    <title>个人主页</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<script>
+(async function() {
+    try {
+        const res = await fetch('content.json');
+        const data = await res.json();
+
+        document.title = data['姓名'] + ' - 个人主页';
+
+        // 头部
+        document.querySelector('header .container').innerHTML = `
+            <img src="avatar.jpg" alt="头像" class="avatar">
+            <h1>${data['姓名']}</h1>
+            <p class="tagline">${data['一句话介绍']}</p>
+        `;
+
+        // 关于我
+        if (data['关于我']) {
+            document.getElementById('about').querySelector('.container').innerHTML = `
+                <h2>关于我</h2>
+                <p>${data['关于我']}</p>
+            `;
+        } else {
+            document.getElementById('about').style.display = 'none';
+        }
+
+        // 技能
+        if (data['技能'] && data['技能'].length) {
+            const ul = document.getElementById('skills').querySelector('.container');
+            ul.innerHTML = `<h2>技能</h2><ul>${data['技能'].map(s => `<li>${s}</li>`).join('')}</ul>`;
+        } else {
+            document.getElementById('skills').style.display = 'none';
+        }
+
+        // 经历
+        if (data['经历'] && data['经历'].length) {
+            const exp = document.getElementById('experience').querySelector('.container');
+            exp.innerHTML = `<h2>经历</h2>` + data['经历'].map(e => `
+                <div class="timeline-item">
+                    <h3>${e['时间']} — ${e['标题']}</h3>
+                    <p>${e['描述']}</p>
+                </div>
+            `).join('');
+        } else {
+            document.getElementById('experience').style.display = 'none';
+        }
+
+        // 项目
+        if (data['项目'] && data['项目'].length) {
+            const proj = document.getElementById('projects').querySelector('.container');
+            proj.innerHTML = `<h2>项目</h2><div class="projects-grid">` + data['项目'].map(p => `
+                <div class="project-card">
+                    <div class="project-img" style="background-color: ${p['颜色'] || '#ccc'};">${p['图标'] || '📁'}</div>
+                    <h3>${p['名称']}</h3>
+                    <p>${p['描述']}</p>
+                </div>
+            `).join('') + '</div>';
+        } else {
+            document.getElementById('projects').style.display = 'none';
+        }
+
+        // 联系方式
+        if (data['联系方式']) {
+            const c = data['联系方式'];
+            const contact = document.getElementById('contact').querySelector('.container');
+            let html = '<h2>联系方式</h2>';
+            if (c['邮箱']) html += `<p>邮箱：${c['邮箱']}</p>`;
+            if (c['GitHub']) html += `<p><a href="${c['GitHub']}" target="_blank">GitHub</a></p>`;
+            if (c['LinkedIn']) html += `<p><a href="${c['LinkedIn']}" target="_blank">LinkedIn</a></p>`;
+            contact.innerHTML = html;
+        } else {
+            document.getElementById('contact').style.display = 'none';
+        }
+
+        // 页脚
+        if (data['页脚']) {
+            document.querySelector('footer .container').innerHTML = `<p>${data['页脚']}</p>`;
+        }
+
+    } catch (e) {
+        // 本地文件预览时 fetch 可能失败，显示提示
+        document.body.innerHTML = `
+            <div style="text-align:center;padding:80px 20px;font-family:sans-serif;color:#666;">
+                <h2>预览模式需要启动本地服务器</h2>
+                <p>请在终端执行以下命令后刷新：</p>
+                <code style="background:#f0f0f0;padding:8px 16px;border-radius:4px;">
+                    python3 -m http.server 8000 --directory "$(pwd)"
+                </code>
+                <p style="margin-top:20px;">然后打开 <a href="http://localhost:8000">http://localhost:8000</a></p>
+                <p style="margin-top:30px;font-size:14px;">或是直接推送到 GitHub，访问线上地址查看</p>
+            </div>
+        `;
+    }
+})();
+</script>
+
 <header>
-    <div class="container">
-        <img src="avatar.jpg" alt="头像" class="avatar">
-        <h1>徐沐阳</h1>
-        <p class="tagline">终身学习不停歇，乐观躺平两不误，vibe coding 小菜鸡</p>
-    </div>
+    <div class="container"></div>
 </header>
 
 <section id="about">
-    <div class="container">
-        <h2>关于我</h2>
-        <p>你好，我是徐沐阳。热爱编程，信奉终身学习的理念，正在不断拓宽自己的技术边界。相信技术可以改善生活，也相信生活不止有技术——保持乐观，适当躺平，用自己喜欢的方式探索世界。目前专注于 Web 开发，热衷于用代码做出有趣、有用的东西。</p>
-    </div>
+    <div class="container"></div>
 </section>
 
 <section id="skills">
-    <div class="container">
-        <h2>技能</h2>
-        <ul>
-            <li>JavaScript / TypeScript</li>
-            <li>React / Vue.js</li>
-            <li>Node.js / Express</li>
-            <li>Python / Django</li>
-            <li>MySQL / MongoDB</li>
-            <li>Docker / AWS</li>
-        </ul>
-    </div>
+    <div class="container"></div>
 </section>
 
 <section id="experience">
-    <div class="container">
-        <h2>经历</h2>
-        <div class="timeline-item">
-            <h3>2022 年至今 — ABC 科技有限公司 · 高级前端工程师</h3>
-            <p>负责公司核心产品的前端架构设计，带领 4 人团队完成从 0 到 1 的产品迭代，三个月内上线并获得首批 5 万用户。</p>
-        </div>
-        <div class="timeline-item">
-            <h3>2020 年 — 2022 年 — XYZ 互联网公司 · 前端工程师</h3>
-            <p>参与内部中后台系统的开发与维护，重构了权限管理模块，提升了 40% 的页面加载速度。</p>
-        </div>
-        <div class="timeline-item">
-            <h3>2016 年 — 2020 年 — 某大学 · 计算机科学与技术 · 本科</h3>
-            <p>主攻方向为 Web 前端与用户体验设计，在校期间获得全国大学生程序设计竞赛银奖。</p>
-        </div>
-    </div>
+    <div class="container"></div>
 </section>
 
 <section id="projects">
-    <div class="container">
-        <h2>项目</h2>
-        <div class="project-card">
-            <div class="project-img" style="background-color: #2d6ff7;">📊</div>
-            <h3>智能数据看板</h3>
-            <p>为企业客户提供实时数据可视化的仪表盘系统，支持自定义图表和多维度筛选。</p>
-        </div>
-        <div class="project-card">
-            <div class="project-img" style="background-color: #f0883e;">🎨</div>
-            <h3>在线协作白板</h3>
-            <p>支持多人实时协作的在线白板工具，集成画笔、便签、批注等多种功能。</p>
-        </div>
-        <div class="project-card">
-            <div class="project-img" style="background-color: #2ea043;">📝</div>
-            <h3>个人博客系统</h3>
-            <p>基于静态网站生成器构建的个人技术博客，支持 Markdown 写作和代码高亮。</p>
-        </div>
-    </div>
+    <div class="container"></div>
 </section>
 
 <section id="contact">
-    <div class="container">
-        <h2>联系方式</h2>
-        <p>邮箱：xumuyang [at] gmail.com</p>
-        <p><a href="https://github.com/apirloftheworld" target="_blank">GitHub</a></p>
-        <p><a href="https://linkedin.com/in/xumuyang" target="_blank">LinkedIn</a></p>
-    </div>
+    <div class="container"></div>
 </section>
 
 <footer>
-    <div class="container">
-        <p>&copy; 2026 徐沐阳</p>
-    </div>
+    <div class="container"></div>
 </footer>
 
 </body>
